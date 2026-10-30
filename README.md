@@ -1,8 +1,55 @@
-# spec-first-architect
+# spec-first-architect：写代码前先把规划文件写好
 
-写代码之前的架构师流程：把 PRD、原型、设计稿、现有代码和口头想法，变成一套模型能执行也能自查的开工文件（SPEC.md 规格 + ARCHITECTURE.md 架构 + TASKS.md 任务 + DECISIONS.md 决策记录 + 精简的 CLAUDE.md）。凡是用户说「做个架构规划 / 出技术方案 / 写 spec / 写项目规格 / 先架构后写码 / 开工前准备什么 / 帮我规划怎么做这个产品 / 这个 PRD 怎么落地 / 拆一下任务 / vibe coding 怎么起步」，或者丢来 PRD、原型、设计稿压缩包要求「按这个做」「评估一下怎么实现」时，务必先用本 skill，再动手写任何业务代码，即使用户没说「架构」或「spec」。也适用于已有代码库上加大功能、换版本、重构前的规划。不用于一句话能说清的小改动（直接改），不用于写产品 PRD 本身（那是产品文档），不用于竞品拆解（competitor-teardown）。
+用 Claude Code 做稍大的项目时，常见的情况是：头几个会话很顺，之后开始出问题。新会话不记得之前定过什么，两份文档说法不一致时它随便挑一个，任务说做完了其实没测过。
 
-一个 Claude Code skill。来自合集 [claude-skills](https://github.com/Minerva67/claude-skills)。
+这个 skill 在开工前把 PRD、原型、设计稿和现有代码整理成一套固定的文件。之后每个编码会话拿着这些文件就能独立干活，也能自己检查有没有做对。
+
+## 适合什么时候用
+
+- 手上有 PRD、原型或设计稿，准备开始写代码
+- 已有代码库，要加一个大功能、换版本或重构
+- 只有一个想法，还没有文档。它会先问你问题，再写规划
+
+一句话能说清的小改动不需要它。
+
+## 你会拿到什么
+
+在你的项目里生成五个文件：
+
+| 文件 | 内容 |
+|---|---|
+| `CLAUDE.md` | 每个会话都会读的规则：命令、约定、踩过的坑，保持很短 |
+| `docs/<版本>/SPEC.md` | 做什么、为什么做、范围、验收标准、明确不做的事 |
+| `docs/<版本>/ARCHITECTURE.md` | 分层、接口、数据模型、状态机、验证方式、风险 |
+| `docs/<版本>/TASKS.md` | 任务清单，每项写明要读哪些文件、改哪些文件、用什么命令确认完成 |
+| `docs/<版本>/DECISIONS.md` | 已经定下的事、暂时的假设、等你决定的事（附推荐选项） |
+
+原始材料会复制一份到 `docs/<版本>/source/`，项目不依赖外部链接。
+
+最后的汇报先讲最大的风险和漏洞，再列需要你决定的事项。
+
+## 和直接让 AI 写代码有什么不同
+
+- **材料冲突先排序。** PRD、原型和口头说法不一致时，先定哪个说了算，写进 SPEC。
+- **难以回头的事先定。** 数据模型、主键、支付、权限这类上线后很难改的决定，在写代码前单独列出来。需要你去办的外部事项（资质、备案、第三方账号）也提前列出，方便你同时推进。
+- **每条验收都能跑出结果。** 验收标准对应到单元测试、流程测试、类型检查、截图对照或真机清单，不写「测一下」这种话。
+- **写完后找一个新会话复审。** 复审的会话看不到规划时的思路，只拿原始材料和产出文件逐项核对，专门找没有被覆盖的需求、缺失的依赖和前后不一致的引用。实际使用中，一次复审能找出 20 处左右的问题。
+
+## 怎么用
+
+在 Claude Code 里这样说：
+
+- 「这是 PRD 和原型，帮我做个架构规划」
+- 「这个功能先写 spec 再动手」
+- 「帮我拆一下任务」
+
+规划写完后，编码阶段按 CLAUDE.md 里写好的节奏进行：一个任务开一个新会话，先跑测试看到失败再实现，完成时贴出命令输出作为证据。
+
+## 包含的文件
+
+- `SKILL.md`：九步流程
+- `assets/`：五个文件的模板
+- `references/`：模型特点与对应做法、采访问题库、不可逆决策清单、微信小程序平台备忘
 
 ## 安装
 
@@ -10,19 +57,6 @@
 git clone https://github.com/Minerva67/spec-first-architect.git ~/.claude/skills/spec-first-architect
 ```
 
-装好后在 Claude Code 里输入 `/spec-first-architect`，或者直接描述任务，符合条件时会自动触发。
+重启 Claude Code 后，直接描述你的任务就会触发。也可以输入 `/spec-first-architect` 手动调用。
 
-## 文件
-
-```
-SKILL.md
-assets/ARCHITECTURE.template.md
-assets/CLAUDE.template.md
-assets/DECISIONS.template.md
-assets/SPEC.template.md
-assets/TASKS.template.md
-references/interview.md
-references/irreversible-checklist.md
-references/model-traits.md
-references/platform-wechat-miniprogram.md
-```
+更多 skill 见 [claude-skills](https://github.com/Minerva67/claude-skills)。
